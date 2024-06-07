@@ -11,7 +11,7 @@ networks:
 services:
 
   prometheus:
-    image: prom/prometheus:v2.36.2
+    image: prom/prometheus:v2.52.0
     volumes:
       - ./prometheus/:/etc/prometheus/
       - prometheus_data:/prometheus
@@ -38,7 +38,7 @@ services:
 #          - node.hostname == ${HOSTNAME}
 
   node-exporter:
-    image: quay.io/prometheus/node-exporter:latest
+    image: prom/node-exporter:v1.8.1
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -59,7 +59,7 @@ services:
       mode: global
 
   alertmanager:
-    image: prom/alertmanager
+    image: prom/alertmanager:v0.27.0
     ports:
       - 9093:9093
     volumes:
@@ -75,14 +75,14 @@ services:
 #        constraints:
 #          - node.hostname == ${HOSTNAME}
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:rw
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
     ports:
-      - 8080:8080
+      - "8080:8080"
     networks:
       - back-tier
     restart: always
@@ -90,7 +90,7 @@ services:
       mode: global
 
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:11.0.0
     user: "472"
     depends_on:
       - prometheus

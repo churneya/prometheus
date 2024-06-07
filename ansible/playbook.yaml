@@ -1,0 +1,23 @@
+- name: Pro
+  hosts: virtual
+  tasks:
+    #    - name: Check If Docker Is Installed
+    #      command: docker --version
+    #      register: docker_valid
+    #      ignore_errors: yes
+    - name: Create prometheus dir
+      file:
+        path: ~/prometheus
+        state: directory
+
+    - name: Sync files
+      synchronize:
+        src: "{{ playbook_dir }}/../"
+        dest: ~/prometheus
+        rsync_opts:
+          - "--exclude=ansible --exclude=ansible=.git"
+
+    - name: Docker Compose up
+      community.docker.docker_compose_v2:
+        project_src: prometheus
+#        state: restarted
