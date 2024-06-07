@@ -1,0 +1,28 @@
+- name: Pro
+  hosts: virtual
+  tasks:
+#    - name: Check If Docker Is Installed
+#      command: docker --version
+#      register: docker_valid
+#      ignore_errors: yes
+    - name: Create prometheus dir
+      file:
+        path: ~/prometheus
+        state: directory
+    - name: Copy docker-compose.yaml
+      copy:
+        src: docker-compose.yaml
+        dest: ~/prometheus/docker-compose.yaml
+    - name: Copy prometheus configs
+      copy:
+        src: prometheus/
+        dest: ~/prometheus/prometheus/
+    - name: Copy grafana configs
+      copy:
+        src: grafana/
+        dest: ~/prometheus/grafana/
+
+    - name: Docker Compose up
+      community.docker.docker_compose_v2:
+        project_src: prometheus
+        state: restarted
