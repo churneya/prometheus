@@ -25,17 +25,11 @@ services:
     links:
       - cadvisor:cadvisor
       - alertmanager:alertmanager
-#      - pushgateway:pushgateway
     depends_on:
       - cadvisor
-#      - pushgateway
     networks:
       - back-tier
     restart: always
-#    deploy:
-#      placement:
-#        constraints:
-#          - node.hostname == ${HOSTNAME}
 
   node-exporter:
     image: prom/node-exporter:v1.8.1
@@ -48,15 +42,13 @@ services:
       - '--path.rootfs=/host'
       - '--path.procfs=/host/proc' 
       - '--path.sysfs=/host/sys'
-      - --collector.filesystem.ignored-mount-points
+      - '--collector.filesystem.ignored-mount-points'
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
     ports:
       - 9100:9100
     networks:
       - back-tier
     restart: always
-    deploy:
-      mode: global
 
   alertmanager:
     image: prom/alertmanager:v0.27.0
@@ -70,10 +62,7 @@ services:
     command:
       - '--config.file=/etc/alertmanager/config.yml'
       - '--storage.path=/alertmanager'
-#    deploy:
-#      placement:
-#        constraints:
-#          - node.hostname == ${HOSTNAME}
+
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.49.1
     volumes:
@@ -86,8 +75,6 @@ services:
     networks:
       - back-tier
     restart: always
-    deploy:
-      mode: global
 
   grafana:
     image: grafana/grafana:11.0.0
@@ -105,13 +92,3 @@ services:
       - back-tier
       - front-tier
     restart: always
-
-#  pushgateway:
-#    image: prom/pushgateway
-#    restart: always
-#    expose:
-#      - 9091
-#    ports:
-#      - "9091:9091"
-#    networks:
-#      - back-tier
